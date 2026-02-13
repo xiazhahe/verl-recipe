@@ -149,22 +149,6 @@ class TaskRunner:
             role_worker_mapping[Role.RefPolicy] = ray.remote(AsyncActorRolloutRefWorker)
             mapping[Role.RefPolicy] = global_pool_id
 
-        reward_fn = load_reward_manager(
-            config,
-            tokenizer,
-            0,
-            max_resp_len=config.data.max_response_length,
-            overlong_buffer_cfg=config.reward_model.overlong_buffer,
-        )
-
-        # Note that we always use function-based RM for validation
-        val_reward_fn = load_reward_manager(
-            config,
-            tokenizer,
-            1,
-            max_resp_len=config.data.max_response_length,
-            overlong_buffer_cfg=config.reward_model.overlong_buffer,
-        )
         resource_pool_manager = ResourcePoolManager(resource_pool_spec=resource_pool_spec, mapping=mapping)
 
         trainer = RayDAPOTrainer(
@@ -174,8 +158,6 @@ class TaskRunner:
             role_worker_mapping=role_worker_mapping,
             resource_pool_manager=resource_pool_manager,
             ray_worker_group_cls=ray_worker_group_cls,
-            reward_fn=reward_fn,
-            val_reward_fn=val_reward_fn,
         )
         trainer.init_workers()
         trainer.fit()
