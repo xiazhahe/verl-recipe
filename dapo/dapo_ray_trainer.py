@@ -172,8 +172,6 @@ class RayDAPOTrainer(RayPPOTrainer):
                             if self.use_rm and "rm_scores" not in new_batch.batch.keys():
                                 rm_scores = self.rm_wg.compute_rm_score(new_batch)
                                 new_batch = new_batch.union(rm_scores)
-                            
-                            reward_baseline_tensor, _ = extract_reward(new_batch)
                             reward_baseline_tensor, _ = extract_reward(new_batch)
                             reward_baseline_tensor = reward_baseline_tensor.sum(dim=-1)
 
